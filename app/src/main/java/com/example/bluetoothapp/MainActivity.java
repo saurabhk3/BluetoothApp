@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     Button searchButton;
     BluetoothAdapter bluetoothAdapter;
     ArrayList<String> devices = new ArrayList<>();
+    ArrayList<String> nameList = new ArrayList<>();
     ArrayAdapter<String> adapter ;
     BroadcastReceiver receiver = new BroadcastReceiver() {
        @Override
@@ -42,7 +43,13 @@ public class MainActivity extends AppCompatActivity {
             else if(BluetoothDevice.ACTION_FOUND.equals(action)){
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String rssi = Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
-                devices.add(device.getName() + "    Quality: "+rssi+"dBm");
+                String name = device.getName();
+                String deviceString = name + "    Quality: "+rssi+"dBm";
+
+                if(!nameList.contains(name)){
+                    nameList.add(name);
+                    devices.add(deviceString);
+                }
                 statusTextView.setText("Available Devices :");
             }
 
@@ -81,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                 MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+        devices.clear();
+        nameList.clear();
         bluetoothAdapter.startDiscovery();
     }
 }
