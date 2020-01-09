@@ -42,11 +42,11 @@ public class MainActivity extends AppCompatActivity {
             else if(BluetoothDevice.ACTION_FOUND.equals(action)){
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String rssi = Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
-                devices.add(device.getName() + "    Quality: "+rssi);
+                devices.add(device.getName() + "    Quality: "+rssi+"dBm");
                 statusTextView.setText("Available Devices :");
             }
 
-           listView.setAdapter(adapter);
+          adapter.notifyDataSetChanged();
        }
    };
     @Override
@@ -59,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         statusTextView = findViewById(R.id.status);
         adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_activated_1,devices);
-
-
+        listView.setAdapter(adapter);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         IntentFilter filter = new IntentFilter();
