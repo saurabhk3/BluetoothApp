@@ -13,18 +13,23 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
 
-    TextView searchTextView;
+    TextView searchTextView,statusTextView;
     ListView listView;
     Button searchButton;
     BluetoothAdapter bluetoothAdapter;
+    ArrayList<String> devices = new ArrayList<>();
+    ArrayAdapter<String> adapter ;
     BroadcastReceiver receiver = new BroadcastReceiver() {
        @Override
        public void onReceive(Context context, Intent intent) {
@@ -35,11 +40,13 @@ public class MainActivity extends AppCompatActivity {
                 searchButton.setEnabled(true);
             }
             else if(BluetoothDevice.ACTION_FOUND.equals(action)){
-
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                Log.i("Device","name:"+device.getName()+" Address:"+device.getAddress());
+                String rssi = Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
+                devices.add(device.getName() + "    Quality: "+rssi);
+                statusTextView.setText("Available Devices :");
             }
+
+           listView.setAdapter(adapter);
        }
    };
     @Override
@@ -50,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
         searchTextView = findViewById(R.id.search);
         searchButton = findViewById(R.id.searchButton);
         listView = findViewById(R.id.listView);
+        statusTextView = findViewById(R.id.status);
+        adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_activated_1,devices);
+
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
