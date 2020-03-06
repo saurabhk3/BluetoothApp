@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String NAME = "BluetoothApp";
     private static final UUID MY_UUID = UUID.fromString("85539a92-5d8d-11ea-bc55-0242ac130003");
 
+    static final int enableBT = 1;
     static final int  STATE_CONNECTED = 1;
     static final int  STATE_CONNECTING = 2;
     static final int  STATE_CONNECTION_FAILED = 3;
@@ -84,6 +85,14 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_activated_1,devices);
         listView.setAdapter(adapter);
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(!bluetoothAdapter.isEnabled()){  // ask user to enable BT if not enabled
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent,enableBT);
+        }
+        // ask user to make discoverable for 300 secs
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivity(discoverableIntent);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
